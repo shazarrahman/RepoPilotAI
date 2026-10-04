@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#151b18">
+    <title>RepoPilotAI | Source-grounded answers</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/app.css">
+    <script defer src="/app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="RepoPilotAI home"><span class="brand-mark" aria-hidden="true">R</span><span>RepoPilot<span class="brand-light">AI</span></span></a>
+        <div class="topbar-meta"><span class="service-indicator" aria-hidden="true"></span><span>Private document workspace</span><details id="workspace-menu" class="workspace-menu" hidden><summary class="workspace-menu-trigger"><span class="workspace-trigger-kicker">WORKSPACE</span><span id="workspace-current">Choose a workspace</span><span class="workspace-chevron" aria-hidden="true"></span></summary><div class="workspace-menu-panel"><div class="workspace-menu-heading"><span>Your workspaces</span><span id="workspace-count" class="workspace-count"></span></div><div id="workspace-options" class="workspace-options" role="group" aria-label="Your workspaces"></div><div class="workspace-menu-actions"><button id="new-workspace" class="workspace-menu-action" type="button"><span aria-hidden="true">+</span> New workspace</button><button id="delete-workspace" class="workspace-menu-delete" type="button" hidden>Delete current workspace</button></div></div></details><span class="session-badge" id="session">Not signed in</span><button id="sign-out" class="text-button" type="button" hidden>Sign out</button></div>
+        <button id="theme-toggle" class="theme-toggle" type="button" role="switch" aria-checked="true" aria-label="Dark theme"><span class="theme-label">Dark</span><span class="theme-track" aria-hidden="true"><span class="theme-thumb"></span></span></button>
+      </header>
+      <main class="workspace-layout">
+        <aside class="workflow" aria-label="Workspace progress">
+          <p class="eyebrow">Your workspace</p><h1>Ask your<br> sources.</h1>
+          <p class="intro">Index documents or GitHub source code, then get cited answers.</p>
+          <ol class="steps">
+            <li class="step active" data-step="account" aria-current="step"><span class="step-mark" data-step-number="01">01</span><span><strong>Account</strong><small>Sign in or create one</small></span></li>
+            <li class="step" data-step="workspace"><span class="step-mark" data-step-number="02">02</span><span><strong>Workspace</strong><small>Create or choose a project</small></span></li>
+            <li class="step" data-step="source"><span class="step-mark" data-step-number="03">03</span><span><strong>Sources</strong><small>Add docs or a repo</small></span></li>
+            <li class="step" data-step="question"><span class="step-mark" data-step-number="04">04</span><span><strong>Question</strong><small>Ask and review cited answers</small></span></li>
+          </ol>
+          <div class="privacy-note"><span aria-hidden="true">●</span><p>Your workspace is private to your account.</p></div>
+        </aside>
+        <section class="workbench" aria-label="Document question workflow">
+          <div class="workbench-heading"><div><p class="eyebrow">Codebase and document assistant</p><h2>Ask across your sources</h2></div><div class="workbench-meta"><span id="usage-status" class="usage-status" aria-live="polite"></span><span class="mode-label">LOCAL MVP</span></div></div>
+          <div id="notice" class="notice" role="status" aria-live="polite" tabindex="-1">Sign in to begin. Your progress will appear here.</div>
+          <section class="form-section" data-panel="account" aria-labelledby="account-heading">
+            <div class="section-heading"><span class="section-index">01</span><div><h3 id="account-heading">Your account</h3><p>Use an email and password to access your workspace.</p></div></div>
+            <div class="form-grid">
+              <label>Email address<input id="email" type="email" autocomplete="email" placeholder="name@example.com" required aria-describedby="email-error"><span class="field-error" id="email-error"></span></label>
+              <label>Password<input id="password" type="password" autocomplete="current-password" placeholder="At least 8 characters" minlength="8" maxlength="128" required aria-describedby="password-error"><span class="field-error" id="password-error"></span></label>
+              <div class="button-row"><button id="register" class="button button-secondary" type="button">Create account</button><button id="login" class="button button-primary" type="button">Sign in <span aria-hidden="true">→</span></button></div>
+            </div>
+          </section>
+          <section class="form-section" data-panel="workspace" aria-labelledby="workspace-heading" hidden>
+            <div class="section-heading"><span class="section-index">02</span><div><h3 id="workspace-heading">Create a workspace</h3><p>Create a separate project space for its sources and chat history.</p></div></div>
+            <div class="form-grid form-grid-action"><label>Workspace name<input id="workspace" type="text" maxlength="100" placeholder="e.g. Product research" required aria-describedby="workspace-error"><span class="field-error" id="workspace-error"></span></label><button id="create" class="button button-primary align-end" type="button" disabled>Create workspace <span aria-hidden="true">→</span></button></div>
+            <p id="workspace-status" class="inline-meta"></p>
+          </section>
+          <section class="form-section" data-panel="source" aria-labelledby="source-heading" hidden>
+            <div class="section-heading"><span class="section-index">03</span><div><h3 id="source-heading">Add a source</h3><p>Upload a document or connect a GitHub repository to index its text and code.</p></div></div>
+            <div class="source-options">
+              <div class="source-option"><p class="source-kind">DOCUMENT</p><label class="file-field">Text or Markdown file<input id="file" type="file" accept=".txt,.md,text/plain,text/markdown" aria-describedby="file-error"><span class="field-error" id="file-error"></span></label><div class="source-action"><button id="upload" class="button button-primary" type="button" disabled>Upload source <span aria-hidden="true">↑</span></button></div><p class="field-note">Maximum file size: 2 MB.</p></div>
+              <div class="source-divider" aria-hidden="true">OR</div>
+              <div class="source-option"><p class="source-kind">GITHUB REPOSITORY</p><label>Repository URL<input id="github-repo" type="url" placeholder="https://github.com/owner/repository" aria-describedby="github-error"></label><label>Fine-grained token <span class="optional-label">Optional; helps public rate limits</span><input id="github-token" type="password" autocomplete="off" placeholder="Contents: Read-only"></label><p class="field-note">Public repos need no token unless GitHub rate-limits this server. Private repos require Contents: Read-only access. This token is used only for this import. Imports up to 40 files / 500 KB.</p><div class="source-action"><button id="import-repo" class="button button-primary" type="button" disabled>Index repository <span aria-hidden="true">↗</span></button></div><span class="field-error" id="github-error"></span></div>
+            </div>
+            <p id="source-status" class="inline-meta"></p>
+            <div id="sources-list" class="sources-list" aria-label="Indexed sources"></div>
+            <button id="continue-to-chat" class="button button-primary continue-button" type="button" disabled>Continue to chat <span aria-hidden="true">→</span></button>
+          </section>
+          <section class="form-section question-section" data-panel="question" aria-labelledby="question-heading" hidden>
+            <div class="section-heading"><span class="section-index">04</span><div><h3 id="question-heading">Ask a question</h3><p>Answers cite matching document passages or code files.</p></div></div>
+            <div class="conversation-controls"><label>Saved conversations<select id="conversation-picker" aria-label="Saved conversations"></select></label><div class="conversation-buttons"><button id="new-conversation" class="button button-secondary" type="button">New chat</button><button id="delete-conversation" class="button button-secondary" type="button" disabled>Delete chat</button></div></div>
+            <div class="chat-actions"><button id="manage-sources" class="button button-secondary" type="button">Manage sources</button></div>
+            <form id="question-form" class="question-form"><label class="visually-hidden" for="question">Your question</label><input id="question" type="text" minlength="3" maxlength="2000" placeholder="How does authentication work?" required aria-describedby="question-error"><button id="ask" class="button button-primary" type="submit" disabled>Ask <span aria-hidden="true">↗</span></button><span class="field-error" id="question-error"></span></form>
+            <div id="conversation-history" class="conversation-history" role="log" aria-live="polite" aria-relevant="additions text"></div>
+            <div class="answer-block" aria-live="polite"><div class="answer-label">ANSWER</div><div id="answer" class="answer">Your answer will appear here after you upload a source.</div><div id="citations" class="citations"></div></div>
+          </section>
+          <footer class="workbench-footer">Documents: .txt and .md, up to 2 MB <span>·</span> Repositories: up to 40 source files / 500 KB per import</footer>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
